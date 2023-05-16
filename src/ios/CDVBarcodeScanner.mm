@@ -101,7 +101,6 @@
 @property (nonatomic, retain) NSString*        alternateXib;
 @property (nonatomic)         BOOL             shutterPressed;
 @property (nonatomic, retain) IBOutlet UIView* overlayView;
-@property (nonatomic, retain) UIToolbar * toolbar;
 @property (nonatomic, retain) UIView * reticleView;
 // unsafe_unretained is equivalent to assign - used to prevent retain cycles in the property below
 @property (nonatomic, unsafe_unretained) id orientationDelegate;
@@ -886,70 +885,22 @@ parentViewController:(UIViewController*)parentViewController
     overlayView.autoresizingMask    = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     overlayView.opaque              = NO;
 
-    self.toolbar = [[UIToolbar alloc] init];
-    self.toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-
-    id cancelButton = [[UIBarButtonItem alloc]
-                       initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                       target:(id)self
-                       action:@selector(cancelButtonPressed:)
-                       ];
-
-
-    id flexSpace = [[UIBarButtonItem alloc]
-                    initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                    target:nil
-                    action:nil
-                    ];
-
-    id flipCamera = [[UIBarButtonItem alloc]
-                       initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                       target:(id)self
-                       action:@selector(flipCameraButtonPressed:)
-                       ];
-
-    NSMutableArray *items;
-
-#if USE_SHUTTER
-    id shutterButton = [[UIBarButtonItem alloc]
-                        initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                        target:(id)self
-                        action:@selector(shutterButtonPressed)
-                        ];
-
-    if (_processor.isShowFlipCameraButton) {
-      items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, flipCamera, shutterButton, nil];
-    } else {
-      items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, shutterButton, nil];
+    #define ROUND_BUTTON_SIZE  28.0f
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    if (@available(iOS 13.0, *)) {
+        [button setImage:[UIImage systemImageNamed:@"chevron.left"] forState:UIControlStateNormal];
     }
-#else
-    if (_processor.isShowFlipCameraButton) {
-      items = [@[flexSpace, cancelButton, flexSpace, flipCamera] mutableCopy];
-    } else {
-      items = [@[flexSpace, cancelButton, flexSpace] mutableCopy];
+    else {
+        [button setImage:[UIImage imageNamed:@"backChevon"] forState:UIControlStateNormal];
     }
-#endif
+    [button addTarget:self action:@selector(cancelButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    button.frame = CGRectMake(20, 50, ROUND_BUTTON_SIZE, ROUND_BUTTON_SIZE);
+    button.backgroundColor=UIColor.whiteColor;
+    button.clipsToBounds = YES;
+    button.layer.cornerRadius = ROUND_BUTTON_SIZE/2.0f;
+    button.tintColor=UIColor.grayColor;
 
-    if (_processor.isShowTorchButton && !_processor.isFrontCamera) {
-      AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-      if ([device hasTorch] && [device hasFlash]) {
-        NSURL *bundleURL = [[NSBundle mainBundle] URLForResource:@"CDVBarcodeScanner" withExtension:@"bundle"];
-        NSBundle *bundle = [NSBundle bundleWithURL:bundleURL];
-        NSString *imagePath = [bundle pathForResource:@"torch" ofType:@"png"];
-        UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
-
-        id torchButton = [[UIBarButtonItem alloc]
-                           initWithImage:image
-                                   style:UIBarButtonItemStylePlain
-                                  target:(id)self
-                                  action:@selector(torchButtonPressed:)
-                           ];
-
-      [items insertObject:torchButton atIndex:0];
-    }
-  }
-    self.toolbar.items = items;
-    [overlayView addSubview: self.toolbar];
+    [overlayView addSubview: button];
 
     UIImage* reticleImage = [self buildReticleImage];
     self.reticleView = [[UIImageView alloc] initWithImage:reticleImage];
@@ -1073,14 +1024,10 @@ parentViewController:(UIViewController*)parentViewController
         bounds = CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, self.view.safeAreaLayoutGuide.layoutFrame.size.height+self.view.safeAreaLayoutGuide.layoutFrame.origin.y);
     }
 
-    [self.toolbar sizeToFit];
-    CGFloat toolbarHeight  = [self.toolbar frame].size.height;
     CGFloat rootViewHeight = CGRectGetHeight(bounds);
     CGFloat rootViewWidth  = CGRectGetWidth(bounds);
-    CGRect  rectArea       = CGRectMake(0, rootViewHeight - toolbarHeight, rootViewWidth, toolbarHeight);
-    [self.toolbar setFrame:rectArea];
 
-    self.reticleView.center = CGPointMake(self.view.center.x, self.view.center.y-self.toolbar.frame.size.height);
+    self.reticleView.center = CGPointMake(self.view.center.x, self.view.center.y);
 }
 
 @end
