@@ -1,5 +1,15 @@
 # Change Log
 
+## v8.1.2
+
+- Update barcodescanner to v3.5.1 (https://github.com/simplifier-ag/barcodescanner-lib-aar/releases/download/v3.5.1/barcodescanner-release-3.5.1.aar)
+
+## v8.1.1
+
+- compile -> implementation
+- success & cancel event
+- full screen on iOS 13+
+
 ## v8.1.0
 
 - Don't use `dispatch_sync` if already in the main thread ([#797](https://github.com/phonegap/phonegap-plugin-barcodescanner/pull/797)) [view commit](https://github.com/phonegap/phonegap-plugin-barcodescanner/commit/d45ffc32c03e489b6bb3da8a29d950e7a89f4812)
