@@ -554,6 +554,7 @@ parentViewController:(UIViewController*)parentViewController
     }
 
     [output setMetadataObjectTypes:[self formatObjectTypes]];
+    self.output=output;
 
     // setup capture preview layer
     self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:captureSession];
@@ -815,14 +816,17 @@ parentViewController:(UIViewController*)parentViewController
 }
 
 - (CGRect) rectOfInterest:(AVCaptureVideoPreviewLayer*) view {
-    if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation))
+    if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation))
     {
         return CGRectMake((view.frame.size.height/2 - RETICLE_SIZE/2)/view.frame.size.height,
                           (view.frame.size.width/2 - RETICLE_SIZE/2)/view.frame.size.width,
                           RETICLE_SIZE/view.frame.size.height,
                           RETICLE_SIZE/view.frame.size.width);
     } else {
-        return CGRectMake(0,0,1,1);
+        return CGRectMake((view.frame.size.width/2 - RETICLE_SIZE/2)/view.frame.size.width,
+                          (view.frame.size.height/2 - RETICLE_SIZE/2)/view.frame.size.height,
+                          RETICLE_SIZE/view.frame.size.width,
+                          RETICLE_SIZE/view.frame.size.height);
     }
 }
 
