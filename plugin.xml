@@ -42,6 +42,7 @@
       <uses-permission android:name="android.permission.FLASHLIGHT"/>
       <uses-feature android:name="android.hardware.camera" android:required="false"/>
     </config-file>
+      <framework src="com.journeyapps:zxing-android-embedded:4.3.0" />
   </platform>
   <platform name="windows">
     <js-module src="src/windows/BarcodeScannerProxy.js" name="BarcodeScannerProxy">
