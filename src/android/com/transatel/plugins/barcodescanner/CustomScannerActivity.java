@@ -14,4 +14,7 @@ public class CustomScannerActivity extends CaptureActivity {
     setContentView(R.layout.custom_scanner);
     return findViewById(R.id.zxing_barcode_scanner);
   }
+  public void back(View view) {
+      this.finish();
+  }
 }
