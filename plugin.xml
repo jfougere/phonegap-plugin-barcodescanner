@@ -26,25 +26,22 @@
     <framework src="AudioToolbox.framework" />
   </platform>
   <platform name="android">
-    <source-file src="src/android/com/phonegap/plugins/barcodescanner/BarcodeScanner.java" target-dir="src/com/phonegap/plugins/barcodescanner"/>
+    <source-file src="src/android/com/transatel/plugins/barcodescanner/BarcodeScanner.java" target-dir="src/com/transatel/plugins/barcodescanner"/>
+    <source-file src="src/android/com/transatel/plugins/barcodescanner/CustomScannerActivity.java" target-dir="src/com/transatel/plugins/barcodescanner"/>
+    <resource-file src="src/android/res" target="res" />
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="BarcodeScanner">
-        <param name="android-package" value="com.phonegap.plugins.barcodescanner.BarcodeScanner"/>
+        <param name="android-package" value="com.transatel.plugins.barcodescanner.BarcodeScanner"/>
       </feature>
     </config-file>
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
-      <activity android:name="com.google.zxing.client.android.CaptureActivity" android:clearTaskOnLaunch="true" android:configChanges="orientation|keyboardHidden|screenSize" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:windowSoftInputMode="stateAlwaysHidden" android:exported="false"/>
-      <activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:label="Share"/>
+      <activity android:clearTaskOnLaunch="true" android:configChanges="orientation|keyboardHidden|screenSize" android:exported="false" android:name="com.transatel.plugins.barcodescanner.CustomScannerActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:windowSoftInputMode="stateAlwaysHidden" />
     </config-file>
     <config-file target="AndroidManifest.xml" parent="/manifest">
       <uses-permission android:name="android.permission.CAMERA"/>
       <uses-permission android:name="android.permission.FLASHLIGHT"/>
       <uses-feature android:name="android.hardware.camera" android:required="false"/>
     </config-file>
-    <framework src="src/android/barcodescanner.gradle" custom="true" type="gradleReference"/>
-    <framework src="com.android.support:support-v4:$ANDROID_SUPPORT_V4_VERSION"/>
-    <lib-file src="src/android/barcodescanner-release-3.5.1.aar"/>
-    <preference name="ANDROID_SUPPORT_V4_VERSION" default="27.+"/>
   </platform>
   <platform name="windows">
     <js-module src="src/windows/BarcodeScannerProxy.js" name="BarcodeScannerProxy">
