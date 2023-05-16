@@ -10,6 +10,11 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <Cordova/CDVPlugin.h>
 
+#define RETICLE_SIZE    200.0f
+#define RETICLE_WIDTH    4.0f
+#define RETICLE_OFFSET   5.0f
+#define RETICLE_ALPHA     0.8f
+
 
 //------------------------------------------------------------------------------
 // Delegate to handle orientation functions
@@ -68,6 +73,7 @@
 @property (nonatomic)         BOOL                        isSuccessBeepEnabled;
 @property (nonatomic)         BOOL                        isSuccess;
 @property (nonatomic)         BOOL                        isCancelled;
+@property (nonatomic, retain) AVCaptureMetadataOutput*    output;
 
 
 - (id)initWithPlugin:(CDVBarcodeScanner*)plugin callback:(NSString*)callback parentViewController:(UIViewController*)parentViewController alterateOverlayXib:(NSString *)alternateXib;
@@ -553,6 +559,7 @@ parentViewController:(UIViewController*)parentViewController
     self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:captureSession];
     self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
 
+
     // run on next event loop pass [captureSession startRunning]
     [captureSession performSelector:@selector(startRunning) withObject:nil afterDelay:0];
 
@@ -801,9 +808,22 @@ parentViewController:(UIViewController*)parentViewController
     [self.view.layer insertSublayer:previewLayer below:[[self.view.layer sublayers] objectAtIndex:0]];
 
     [self.view addSubview:[self buildOverlayView]];
+    [self.processor.output setRectOfInterest:[self rectOfInterest:previewLayer]];
     [self startCapturing];
 
     [super viewDidAppear:animated];
+}
+
+- (CGRect) rectOfInterest:(AVCaptureVideoPreviewLayer*) view {
+    if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation))
+    {
+        return CGRectMake((view.frame.size.height/2 - RETICLE_SIZE/2)/view.frame.size.height,
+                          (view.frame.size.width/2 - RETICLE_SIZE/2)/view.frame.size.width,
+                          RETICLE_SIZE/view.frame.size.height,
+                          RETICLE_SIZE/view.frame.size.width);
+    } else {
+        return CGRectMake(0,0,1,1);
+    }
 }
 
 - (AVCaptureVideoOrientation)interfaceOrientationToVideoOrientation:(UIInterfaceOrientation)orientation {
@@ -858,14 +878,14 @@ parentViewController:(UIViewController*)parentViewController
         return nil;
     }
 
-	self.overlayView.autoresizesSubviews = YES;
+    self.overlayView.autoresizesSubviews = YES;
     self.overlayView.autoresizingMask    = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.opaque              = NO;
 
-	CGRect bounds = self.view.bounds;
+    CGRect bounds = self.view.bounds;
     bounds = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
 
-	[self.overlayView setFrame:bounds];
+    [self.overlayView setFrame:bounds];
 
     return self.overlayView;
 }
@@ -918,13 +938,6 @@ parentViewController:(UIViewController*)parentViewController
     [self resizeElements];
     return overlayView;
 }
-
-//--------------------------------------------------------------------------
-
-#define RETICLE_SIZE    200.0f
-#define RETICLE_WIDTH    4.0f
-#define RETICLE_OFFSET   5.0f
-#define RETICLE_ALPHA     0.8f
 
 //-------------------------------------------------------------------------
 // builds the green box and red line
@@ -1019,14 +1032,6 @@ parentViewController:(UIViewController*)parentViewController
 }
 
 -(void) resizeElements {
-    CGRect bounds = self.view.bounds;
-    if (@available(iOS 11.0, *)) {
-        bounds = CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, self.view.safeAreaLayoutGuide.layoutFrame.size.height+self.view.safeAreaLayoutGuide.layoutFrame.origin.y);
-    }
-
-    CGFloat rootViewHeight = CGRectGetHeight(bounds);
-    CGFloat rootViewWidth  = CGRectGetWidth(bounds);
-
     self.reticleView.center = CGPointMake(self.view.center.x, self.view.center.y);
 }
 
