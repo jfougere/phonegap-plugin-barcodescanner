@@ -1,5 +1,7 @@
 package com.transatel.plugins.barcodescanner;
 
+import android.view.View;
+
 import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.transatel.selfcare.ubigi.R;
@@ -9,12 +11,13 @@ import com.transatel.selfcare.ubigi.R;
  */
 public class CustomScannerActivity extends CaptureActivity {
 
-  @Override
-  protected DecoratedBarcodeView initializeContent() {
-    setContentView(R.layout.custom_scanner);
-    return findViewById(R.id.zxing_barcode_scanner);
-  }
-  public void back(View view) {
-      this.finish();
-  }
+    @Override
+    protected DecoratedBarcodeView initializeContent() {
+        setContentView(R.layout.custom_scanner);
+        return findViewById(R.id.zxing_barcode_scanner);
+    }
+
+    public void back(View view) {
+        this.finish();
+    }
 }
