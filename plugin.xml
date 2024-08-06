@@ -33,7 +33,10 @@
                      target-dir="src/com/transatel/plugins/barcodescanner"/>
         <source-file src="src/android/com/transatel/plugins/barcodescanner/CustomScannerActivity.java"
                      target-dir="src/com/transatel/plugins/barcodescanner"/>
-        <resource-file src="src/android/res" target="res"/>
+        <resource-file src="src/android/res/layout/custom_scanner.xml" target="res/layout/custom_scanner.xml"/>
+        <resource-file src="src/android/res/layout/custom_barcode_scanner.xml" target="res/layout/custom_barcode_scanner.xml"/>
+        <resource-file src="src/android/res/drawable/rounded_corners.xml" target="res/drawable/rounded_corners.xml"/>
+        <resource-file src="src/android/res/drawable/arrow_back.xml" target="res/drawable/arrow_back.xml"/>Ľ
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="BarcodeScanner">
                 <param name="android-package" value="com.transatel.plugins.barcodescanner.BarcodeScanner"/>
